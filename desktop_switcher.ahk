@@ -77,6 +77,20 @@ getSessionId()
 }
 
 ;
+; This function restores window's focus after switching 
+; desktop with new method (throught TaskView)
+;
+restoreActiveWindow()
+{
+    WinGetClass, ActiveClassName, A
+    if (ActiveClassName == "MultitaskingViewFrame") {
+        Sleep, 100
+        Send, !{Esc}
+    }
+    
+}
+
+;
 ; This function switches to the desktop number provided.
 ;
 switchDesktopByNumber(targetDesktop)
@@ -143,6 +157,9 @@ switchDesktopByNumber(targetDesktop)
         ; Finally, select the desktop
         Send, {Enter}
         CurrentDesktop := targetDesktop
+        
+        ; Restore focus
+        restoreActiveWindow()
     }
 }
 
