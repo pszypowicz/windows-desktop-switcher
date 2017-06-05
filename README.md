@@ -1,5 +1,5 @@
 # windows-desktop-switcher
-An AutoHotKey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num>. It also allows for creation/deletion of desktops by hotkey (see below).
+An AutoHotKey script for Windows that lets a user change virtual desktops by pressing Win + &lt;num>. It also allows for creation/deletion of desktops by hotkey (see below).
 
 ## Overview
 This script creates 'better' hotkeys for switching virtual desktops in windows 10. I built this to better mirror
