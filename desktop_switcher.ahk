@@ -163,7 +163,6 @@ deleteVirtualDesktop()
 }
 
 ; Main
-SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 
