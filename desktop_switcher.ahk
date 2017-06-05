@@ -1,6 +1,7 @@
 ; Globals
 DesktopCount = 2        ; Windows starts with 2 desktops at boot
 CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
+PreviousDesktop := 1    ; Number of previous desktop
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
@@ -8,7 +9,7 @@ CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them thi
 ; List of desktops appears to be in HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops
 ;
 mapDesktopsFromRegistry() {
-    global CurrentDesktop, DesktopCount
+    global CurrentDesktop, DesktopCount, PreviousDesktop
 
     ; Get the current desktop UUID. Length should be 32 always, but there's no guarantee this couldn't change in a later Windows release so we check.
     IdLength := 32
@@ -41,7 +42,10 @@ mapDesktopsFromRegistry() {
         ; Break out if we find a match in the list. If we didn't find anything, keep the
         ; old guess and pray we're still correct :-D.
         if (DesktopIter = CurrentDesktopId) {
-            CurrentDesktop := i + 1
+            if (CurrentDesktop <> i + 1) {
+                PreviousDesktop := CurrentDesktop
+                CurrentDesktop := i + 1
+            }
             OutputDebug, Current desktop number is %CurrentDesktop% with an ID of %DesktopIter%.
             break
         }
@@ -75,7 +79,7 @@ getSessionId()
 ;
 switchDesktopByNumber(targetDesktop)
 {
-    global CurrentDesktop, DesktopCount
+    global CurrentDesktop, DesktopCount, PreviousDesktop
 
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
@@ -91,6 +95,8 @@ switchDesktopByNumber(targetDesktop)
         OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
         return
     }
+
+    PreviousDesktop := CurrentDesktop
 
     if (Abs(CurrentDesktop - targetDesktop) < 2) {
         ; Go right until we reach the desktop we want
@@ -139,14 +145,24 @@ switchDesktopByNumber(targetDesktop)
 }
 
 ;
+; This function switches to last desktop where you were before
+;
+switchToPreviousDesktop()
+{
+    global PreviousDesktop
+    switchDesktopByNumber(PreviousDesktop)
+}
+
+;
 ; This function creates a new virtual desktop and switches to it
 ;
 createVirtualDesktop()
 {
-    global CurrentDesktop, DesktopCount
+    global CurrentDesktop, DesktopCount, PreviousDesktop
     Send, #^d
     DesktopCount++
-    CurrentDesktop = %DesktopCount%
+    PreviousDesktop := CurrentDesktop
+    CurrentDesktop := DesktopCount
     OutputDebug, [create] desktops: %DesktopCount% current: %CurrentDesktop%
 }
 
@@ -155,15 +171,17 @@ createVirtualDesktop()
 ;
 deleteVirtualDesktop()
 {
-    global CurrentDesktop, DesktopCount
+    global CurrentDesktop, DesktopCount, PreviousDesktop
     Send, #^{F4}
     DesktopCount--
     CurrentDesktop--
+    PreviousDesktop := CurrentDesktop
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
 }
 
 ; Main
 mapDesktopsFromRegistry()
+PreviousDesktop := CurrentDesktop
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 
 ; User config!
