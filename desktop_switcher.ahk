@@ -2,8 +2,8 @@
 ; in SystemPropertiesAdvanced.exe -> Advanced -> Performance -> Settings -> Visual Effects
 
 ; Globals
-DesktopCount = 2        ; Windows starts with 2 desktops at boot
-CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
+DesktopCount := 2        ; Windows starts with 2 desktops at boot
+CurrentDesktop := 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
 PreviousDesktop := 1    ; Number of previous desktop
 UseAltSwitchAfter := 2  ; Use alternative (TaskView) switch method if distance is more than this variable
 
