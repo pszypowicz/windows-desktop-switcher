@@ -12,11 +12,12 @@ Note that this only overrides CapsLock for the key combinations below. Otherwise
 Install AutoHotKey, then run the desktop_switcher.ahk script (open with AutoHotKey if prompted). I would recommend putting it in your startup folder and it'll be invoked on login.
 
 ## Hotkeys
-        <CapsLock> + <Num>      - Switches to virtual desktop "num".
-        <CapsLock> + C          - Create a new virtual desktop
-        <CapsLock> + D          - Delete the current virtual desktop
-        <CapsLock> + A or P     - Switch to virtual desktop on left
-        <CapsLock> + S or N     - Switch to virtual desktop on right
+        Win + <Num>      - Switches to virtual desktop "num".
+        Win + =          - Create a new virtual desktop
+        Win + -          - Delete the current virtual desktop
+        Win + P          - Switch to virtual desktop on left
+        Win + N          - Switch to virtual desktop on right
+        Win + ~          - Switch between 2 last virtual desktops
 
 To change the key mappings, modify the bottom of the script and reload. Be sure to read about the [symbols AutoHotKey uses](https://autohotkey.com/docs/Hotkeys.htm) for key mapping.
 
