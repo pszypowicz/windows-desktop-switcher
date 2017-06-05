@@ -164,6 +164,66 @@ switchDesktopByNumber(targetDesktop)
 }
 
 ;
+; This function moves active window to the desktop number provided.
+;
+moveCurrentWindowToDesktopByNumber(targetDesktop)
+{
+    global CurrentDesktop, DesktopCount
+
+    ; Re-generate the list of desktops and where we fit in that. We do this because
+    ; the user may have switched desktops via some other means than the script.
+    mapDesktopsFromRegistry()
+
+    ; Don't move to current desktop
+    if (targetDesktop = CurrentDesktop) {
+        return
+    }
+
+    ; Don't attempt to move to an invalid desktop
+    if (targetDesktop > DesktopCount || targetDesktop < 1) {
+        OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
+        return
+    }
+
+    ; Open task view and wait for it to become active
+    Loop
+    {
+        OutputDebug, Opening Task View
+        Send, #{Tab}
+        OutputDebug, Waiting for Task View
+        WinWaitActive, ahk_class MultitaskingViewFrame,, 0.2
+        if ErrorLevel {
+            OutputDebug, Timed out waiting for task view
+        }
+        else {
+            break
+        }
+    }
+    
+    ; Show context menu for active window
+    Send, {AppsKey}
+    
+    ; Select Move item
+    Send, m
+    
+    ; Count how many Down keys needed
+    downKeyCount := targetDesktop - 1
+    ; Current desktop not showed in menu, so decrease count by 1
+    if (targetDesktop > CurrentDesktop) {
+        downKeyCount--
+    }
+    
+    ; Select targetDesktop in menu
+    Send, {Down %downKeyCount%}
+    
+    ; Send window to selected desktop
+    Send, {Enter}
+    
+    ; Close TaskView
+    Send, {Esc}
+}
+
+;
 ; This function switches to last desktop where you were before
 ;
 switchToPreviousDesktop()
@@ -214,6 +274,15 @@ OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 #7::switchDesktopByNumber(7)
 #8::switchDesktopByNumber(8)
 #9::switchDesktopByNumber(9)
+^#1::moveCurrentWindowToDesktopByNumber(1)
+^#2::moveCurrentWindowToDesktopByNumber(2)
+^#3::moveCurrentWindowToDesktopByNumber(3)
+^#4::moveCurrentWindowToDesktopByNumber(4)
+^#5::moveCurrentWindowToDesktopByNumber(5)
+^#6::moveCurrentWindowToDesktopByNumber(6)
+^#7::moveCurrentWindowToDesktopByNumber(7)
+^#8::moveCurrentWindowToDesktopByNumber(8)
+^#9::moveCurrentWindowToDesktopByNumber(9)
 ; #n::switchDesktopByNumber(CurrentDesktop + 1)
 ; #p::switchDesktopByNumber(CurrentDesktop - 1)
 #=::createVirtualDesktop()
