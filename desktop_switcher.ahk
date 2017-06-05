@@ -81,6 +81,11 @@ switchDesktopByNumber(targetDesktop)
     ; the user may have switched desktops via some other means than the script.
     mapDesktopsFromRegistry()
 
+    ; Don't switch to current desktop
+    if (targetDesktop = CurrentDesktop) {
+        return
+    }
+
     ; Don't attempt to switch to an invalid desktop
     if (targetDesktop > DesktopCount || targetDesktop < 1) {
         OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
