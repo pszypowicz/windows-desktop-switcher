@@ -1,9 +1,13 @@
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+; For faster switching with standard method needs to disable "Animate windows when minimizing and maximizing"
+; in SystemPropertiesAdvanced.exe -> Advanced -> Performance -> Settings -> Visual Effects
 
 ; Globals
 DesktopCount = 2        ; Windows starts with 2 desktops at boot
 CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
 PreviousDesktop := 1    ; Number of previous desktop
+UseAltSwitchAfter := 2  ; Use alternative (TaskView) switch method if distance is more than this variable
+
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
@@ -95,7 +99,7 @@ restoreActiveWindow()
 ;
 switchDesktopByNumber(targetDesktop)
 {
-    global CurrentDesktop, DesktopCount, PreviousDesktop
+    global CurrentDesktop, DesktopCount, PreviousDesktop, UseAltSwitchAfter
 
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
@@ -114,7 +118,7 @@ switchDesktopByNumber(targetDesktop)
 
     PreviousDesktop := CurrentDesktop
 
-    if (Abs(CurrentDesktop - targetDesktop) < 2) {
+    if (Abs(CurrentDesktop - targetDesktop) < UseAltSwitchAfter + 1) {
         ; Go right until we reach the desktop we want
         while (CurrentDesktop < targetDesktop) {
             Send ^#{Right}
