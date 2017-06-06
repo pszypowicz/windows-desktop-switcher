@@ -7,7 +7,7 @@ CurrentDesktop := 1     ; Desktop count is 1-indexed (Microsoft numbers them thi
 PreviousDesktop := 1    ; Number of previous desktop
 UseAltSwitchAfter := 2  ; Use alternative (TaskView) switch method if distance is more than this variable
 
-KeyDelayStandartSwitch := 100 ; Delay between switching each desktop in standart mode.
+KeyDelayStandartSwitch := 100 ; Delay between switching each desktop in standard mode.
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
