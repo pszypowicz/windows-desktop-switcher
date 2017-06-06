@@ -2,12 +2,12 @@
 ; in SystemPropertiesAdvanced.exe -> Advanced -> Performance -> Settings -> Visual Effects
 
 ; Globals
-DesktopCount := 2        ; Windows starts with 2 desktops at boot
-CurrentDesktop := 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
+DesktopCount := 2       ; Windows starts with 2 desktops at boot
+CurrentDesktop := 1     ; Desktop count is 1-indexed (Microsoft numbers them this way)
 PreviousDesktop := 1    ; Number of previous desktop
 UseAltSwitchAfter := 2  ; Use alternative (TaskView) switch method if distance is more than this variable
 
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+KeyDelayStandartSwitch := 100 ; Delay between switching each desktop in standart mode.
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
@@ -88,7 +88,9 @@ restoreActiveWindow()
 {
     WinGetClass, ActiveClassName, A
     if (ActiveClassName == "MultitaskingViewFrame") {
+        ; Waiting desktop switching
         Sleep, 100
+        ; Activating last window
         Send, !{Esc}
     }
     
@@ -99,7 +101,7 @@ restoreActiveWindow()
 ;
 switchDesktopByNumber(targetDesktop)
 {
-    global CurrentDesktop, DesktopCount, PreviousDesktop, UseAltSwitchAfter
+    global CurrentDesktop, DesktopCount, PreviousDesktop, UseAltSwitchAfter, KeyDelayStandartSwitch
 
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
@@ -119,6 +121,9 @@ switchDesktopByNumber(targetDesktop)
     PreviousDesktop := CurrentDesktop
 
     if (Abs(CurrentDesktop - targetDesktop) < UseAltSwitchAfter + 1) {
+        ; Set delay between keys to prevent skipping some of them
+        SetKeyDelay, KeyDelayStandartSwitch
+        
         ; Go right until we reach the desktop we want
         while (CurrentDesktop < targetDesktop) {
             Send ^#{Right}
@@ -132,6 +137,9 @@ switchDesktopByNumber(targetDesktop)
             CurrentDesktop--
             OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
         }
+        
+        ; Remove delay between keys
+        SetKeyDelay, -1
     } else {
         ; Open task view and wait for it to become active
         Loop
